@@ -27,7 +27,7 @@ app.use('/cart',cart)
 
 const  MONGODB_URL ='mongodb+srv://fathimama104:fathimama@cluster0.4hg9k1c.mongodb.net/cremebrulee?retryWrites=true&w=majority'
 mongoose.connect( MONGODB_URL).then(()=>{
-    app.listen(4000,()=>{
-        console.log("server is running on http://localhost:4000");
-    })
+    const PORT = process.env.PORT || 4000;
+    app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+    
 })
