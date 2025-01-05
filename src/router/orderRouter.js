@@ -238,25 +238,40 @@ order.get('/price-filter', async (req, res) => {
 
 order.get('/category-filter', async (req, res) => {
     try {
-        const selectedCategory  = req.query.category
-        console.log(selectedCategory);
-        const products = await productModel.find({ category: selectedCategory });
-        console.log({ category: selectedCategory });
+        const { category, itemName } = req.query;  // Destructure category and itemName from query parameters
+
+        // Create a filter object to hold category and itemName conditions
+        const filter = {};
+
+        // Add category filter if it is provided
+        if (category) {
+            filter.category = category;
+        }
+
+        // Add itemName filter if it is provided
+        if (itemName) {
+            filter.itemName = { $regex: itemName, $options: 'i' };  // Case-insensitive search for itemName
+        }
+
+        // Find products based on the filter object
+        const products = await productModel.find(filter);
+
         if (products.length > 0) {
             return res.status(200).json({
                 success: true,
                 error: false,
-                details:products,
-                message: "Category filtered",
+                details: products,
+                message: "Products filtered",
             });
         } else {
             return res.status(404).json({
                 success: false,
                 error: true,
-                message: "No products found in the selected categories"
+                message: "No products found matching the selected criteria"
             });
         }
     } catch (error) {
+        console.error(error);
         return res.status(500).json({
             success: false,
             error: true,
